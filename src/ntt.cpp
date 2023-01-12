@@ -73,6 +73,7 @@ std::tuple<uint16_t, uint16_t> socks5_init_udp(SOCKET s, SOCKET udp_s, const std
     {
     	writeLog(LOG_TYPE_STUN, "startconnect failed");
         return std::make_tuple(0, 0);
+    }
     len = sizeof(srcaddr);
     if(getsockname(s, reinterpret_cast<sockaddr*>(&srcaddr), &len) < 0)
     {
