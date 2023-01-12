@@ -70,11 +70,14 @@ std::tuple<uint16_t, uint16_t> socks5_init_udp(SOCKET s, SOCKET udp_s, const std
     setTimeout(s, 1000);
     setTimeout(udp_s, 600);
     if(startConnect(s, server, server_port) == SOCKET_ERROR || connectSocks5(s, username, password) == -1)
+    {
+    	writeLog(LOG_TYPE_STUN, "startconnect failed");
         return std::make_tuple(0, 0);
     len = sizeof(srcaddr);
     if(getsockname(s, reinterpret_cast<sockaddr*>(&srcaddr), &len) < 0)
     {
         //cerr<<"error on tcp sockeet getsockname"<<endl;
+        writeLog(LOG_TYPE_STUN, "getsockname failed");
         return std::make_tuple(0, 0);
     }
     std::string self_ip = sockaddrToIPAddr(reinterpret_cast<sockaddr*>(&srcaddr));
@@ -88,6 +91,7 @@ std::tuple<uint16_t, uint16_t> socks5_init_udp(SOCKET s, SOCKET udp_s, const std
     if(bind(udp_s, reinterpret_cast<sockaddr*>(&srcaddr), sizeof(srcaddr)) < 0)
     {
         //cerr<<"error on bind"<<endl;
+        writeLog(LOG_TYPE_STUN, "bind failed");
         return std::make_tuple(0, 0);
     }
 
@@ -96,6 +100,7 @@ std::tuple<uint16_t, uint16_t> socks5_init_udp(SOCKET s, SOCKET udp_s, const std
     if(getsockname(udp_s, reinterpret_cast<sockaddr*>(&srcaddr), &len) < 0)
     {
         //cerr<<"error on udp socket getsockname"<<endl;
+        writeLog(LOG_TYPE_STUN, "startconnect after bind failed");
         return std::make_tuple(0, 0);
     }
     src_port = srcaddr.sin_port;
